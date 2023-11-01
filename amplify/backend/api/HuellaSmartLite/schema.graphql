@@ -1,0 +1,65 @@
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  sub: String
+  email: String
+  isAdmin: Boolean
+  isActive: Boolean
+  companyID: ID! @index(name: "byCompany")
+  Emisions: [Factor] @hasMany(indexName: "byUser", fields: ["id"])
+  Factors: [Factor] @hasMany(indexName: "byUser", fields: ["id"])
+}
+
+type Company @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  email: AWSEmail
+  isActive: Boolean
+  Users: [Factor] @hasMany(indexName: "byCompany", fields: ["id"])
+  Factors: [Factor] @hasMany(indexName: "byCompany", fields: ["id"])
+  Emisions: [Factor] @hasMany(indexName: "byCompany", fields: ["id"])
+}
+
+type Emision @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Company: String!
+  ALCANCE: String!
+  CATEGORIA: String!
+  SUBCATEGORIA: String!
+  ACTIVIDAD: String!
+  COMBUSTIBLE: String!
+  UNIDADFE: String!
+  CANTIDAD: Float!
+  CO2: Float!
+  CH4: Float!
+  N2O: Float!
+  SF6: Float!
+  HFC: Float!
+  PFC: Float!
+  NF3: Float!
+  InicioPeriodo: AWSDate!
+  TerminoPeriodo: AWSDate!
+  INCERTIDUMBRE: String
+  ORIGENFE: String
+  companyID: ID! @index(name: "byCompany")
+  userID: ID! @index(name: "byUser")
+}
+
+type Factor @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  cod: String!
+  ALCANCE: String!
+  CATEGORIA: String!
+  SUBCATEGORIA: String!
+  ACTIVIDAD: String!
+  CONCATENADO: String!
+  COMBUSTIBLE: String!
+  CONTAMINANTE: String!
+  INCERTIDUMBRE: String!
+  VALORFE: Float!
+  UNIDADFE: String!
+  ORIGENFE: String!
+  companyID: ID! @index(name: "byCompany")
+  userID: ID! @index(name: "byUser")
+}
+ 
