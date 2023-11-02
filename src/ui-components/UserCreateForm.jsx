@@ -20,7 +20,7 @@ import {
   TextField,
   useTheme,
 } from "@aws-amplify/ui-react";
-import { User, Factor } from "../models";
+import { User, Emision, Factor, Company } from "../models";
 import {
   fetchByPath,
   getOverrideProps,
@@ -200,7 +200,7 @@ export default function UserCreateForm(props) {
     email: "",
     isAdmin: false,
     isActive: false,
-    companyID: "",
+    companyID: undefined,
     Emisions: [],
     Factors: [],
   };
@@ -220,6 +220,8 @@ export default function UserCreateForm(props) {
     setIsAdmin(initialValues.isAdmin);
     setIsActive(initialValues.isActive);
     setCompanyID(initialValues.companyID);
+    setCurrentCompanyIDValue(undefined);
+    setCurrentCompanyIDDisplayValue("");
     setEmisions(initialValues.Emisions);
     setCurrentEmisionsValue(undefined);
     setCurrentEmisionsDisplayValue("");
@@ -228,6 +230,11 @@ export default function UserCreateForm(props) {
     setCurrentFactorsDisplayValue("");
     setErrors({});
   };
+  const [currentCompanyIDDisplayValue, setCurrentCompanyIDDisplayValue] =
+    React.useState("");
+  const [currentCompanyIDValue, setCurrentCompanyIDValue] =
+    React.useState(undefined);
+  const companyIDRef = React.createRef();
   const [currentEmisionsDisplayValue, setCurrentEmisionsDisplayValue] =
     React.useState("");
   const [currentEmisionsValue, setCurrentEmisionsValue] =
@@ -252,12 +259,21 @@ export default function UserCreateForm(props) {
       ? Factors.map((r) => getIDValue.Factors?.(r))
       : getIDValue.Factors?.(Factors)
   );
+  const companyRecords = useDataStoreBinding({
+    type: "collection",
+    model: Company,
+  }).items;
+  const emisionRecords = useDataStoreBinding({
+    type: "collection",
+    model: Emision,
+  }).items;
   const factorRecords = useDataStoreBinding({
     type: "collection",
     model: Factor,
   }).items;
   const getDisplayValue = {
-    Emisions: (r) => `${r?.cod ? r?.cod + " - " : ""}${r?.id}`,
+    companyID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
+    Emisions: (r) => `${r?.Company ? r?.Company + " - " : ""}${r?.id}`,
     Factors: (r) => `${r?.cod ? r?.cod + " - " : ""}${r?.id}`,
   };
   const validations = {
@@ -355,7 +371,7 @@ export default function UserCreateForm(props) {
             ...Emisions.reduce((promises, original) => {
               promises.push(
                 DataStore.save(
-                  Factor.copyOf(original, (updated) => {
+                  Emision.copyOf(original, (updated) => {
                     updated.userID = user.id;
                   })
                 )
@@ -546,13 +562,10 @@ export default function UserCreateForm(props) {
         hasError={errors.isActive?.hasError}
         {...getOverrideProps(overrides, "isActive")}
       ></SwitchField>
-      <TextField
-        label="Company id"
-        isRequired={true}
-        isReadOnly={false}
-        value={companyID}
-        onChange={(e) => {
-          let { value } = e.target;
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
           if (onChange) {
             const modelFields = {
               name,
@@ -567,16 +580,76 @@ export default function UserCreateForm(props) {
             const result = onChange(modelFields);
             value = result?.companyID ?? value;
           }
-          if (errors.companyID?.hasError) {
-            runValidationTasks("companyID", value);
-          }
           setCompanyID(value);
+          setCurrentCompanyIDValue(undefined);
         }}
-        onBlur={() => runValidationTasks("companyID", companyID)}
-        errorMessage={errors.companyID?.errorMessage}
-        hasError={errors.companyID?.hasError}
-        {...getOverrideProps(overrides, "companyID")}
-      ></TextField>
+        currentFieldValue={currentCompanyIDValue}
+        label={"Company id"}
+        items={companyID ? [companyID] : []}
+        hasError={errors?.companyID?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("companyID", currentCompanyIDValue)
+        }
+        errorMessage={errors?.companyID?.errorMessage}
+        getBadgeText={(value) =>
+          value
+            ? getDisplayValue.companyID(
+                companyRecords.find((r) => r.id === value)
+              )
+            : ""
+        }
+        setFieldValue={(value) => {
+          setCurrentCompanyIDDisplayValue(
+            value
+              ? getDisplayValue.companyID(
+                  companyRecords.find((r) => r.id === value)
+                )
+              : ""
+          );
+          setCurrentCompanyIDValue(value);
+        }}
+        inputFieldRef={companyIDRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Company id"
+          isRequired={true}
+          isReadOnly={false}
+          placeholder="Search Company"
+          value={currentCompanyIDDisplayValue}
+          options={companyRecords
+            .filter(
+              (r, i, arr) =>
+                arr.findIndex((member) => member?.id === r?.id) === i
+            )
+            .map((r) => ({
+              id: r?.id,
+              label: getDisplayValue.companyID?.(r),
+            }))}
+          onSelect={({ id, label }) => {
+            setCurrentCompanyIDValue(id);
+            setCurrentCompanyIDDisplayValue(label);
+            runValidationTasks("companyID", label);
+          }}
+          onClear={() => {
+            setCurrentCompanyIDDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            if (errors.companyID?.hasError) {
+              runValidationTasks("companyID", value);
+            }
+            setCurrentCompanyIDDisplayValue(value);
+            setCurrentCompanyIDValue(undefined);
+          }}
+          onBlur={() => runValidationTasks("companyID", currentCompanyIDValue)}
+          errorMessage={errors.companyID?.errorMessage}
+          hasError={errors.companyID?.hasError}
+          ref={companyIDRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "companyID")}
+        ></Autocomplete>
+      </ArrayField>
       <ArrayField
         onChange={async (items) => {
           let values = items;
@@ -620,9 +693,9 @@ export default function UserCreateForm(props) {
           label="Emisions"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search Factor"
+          placeholder="Search Emision"
           value={currentEmisionsDisplayValue}
-          options={factorRecords
+          options={emisionRecords
             .filter((r) => !EmisionsIdSet.has(getIDValue.Emisions?.(r)))
             .map((r) => ({
               id: getIDValue.Emisions?.(r),
@@ -630,7 +703,7 @@ export default function UserCreateForm(props) {
             }))}
           onSelect={({ id, label }) => {
             setCurrentEmisionsValue(
-              factorRecords.find((r) =>
+              emisionRecords.find((r) =>
                 Object.entries(JSON.parse(id)).every(
                   ([key, value]) => r[key] === value
                 )

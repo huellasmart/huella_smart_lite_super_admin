@@ -6,10 +6,182 @@
 
 /* eslint-disable */
 import * as React from "react";
-import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
-import { Emision } from "../models";
-import { fetchByPath, getOverrideProps, validateField } from "./utils";
+import {
+  Autocomplete,
+  Badge,
+  Button,
+  Divider,
+  Flex,
+  Grid,
+  Icon,
+  ScrollView,
+  Text,
+  TextField,
+  useTheme,
+} from "@aws-amplify/ui-react";
+import { Emision, Company as Company0, User } from "../models";
+import {
+  fetchByPath,
+  getOverrideProps,
+  useDataStoreBinding,
+  validateField,
+} from "./utils";
 import { DataStore } from "aws-amplify";
+function ArrayField({
+  items = [],
+  onChange,
+  label,
+  inputFieldRef,
+  children,
+  hasError,
+  setFieldValue,
+  currentFieldValue,
+  defaultFieldValue,
+  lengthLimit,
+  getBadgeText,
+  runValidationTasks,
+  errorMessage,
+}) {
+  const labelElement = <Text>{label}</Text>;
+  const {
+    tokens: {
+      components: {
+        fieldmessages: { error: errorStyles },
+      },
+    },
+  } = useTheme();
+  const [selectedBadgeIndex, setSelectedBadgeIndex] = React.useState();
+  const [isEditing, setIsEditing] = React.useState();
+  React.useEffect(() => {
+    if (isEditing) {
+      inputFieldRef?.current?.focus();
+    }
+  }, [isEditing]);
+  const removeItem = async (removeIndex) => {
+    const newItems = items.filter((value, index) => index !== removeIndex);
+    await onChange(newItems);
+    setSelectedBadgeIndex(undefined);
+  };
+  const addItem = async () => {
+    const { hasError } = runValidationTasks();
+    if (
+      currentFieldValue !== undefined &&
+      currentFieldValue !== null &&
+      currentFieldValue !== "" &&
+      !hasError
+    ) {
+      const newItems = [...items];
+      if (selectedBadgeIndex !== undefined) {
+        newItems[selectedBadgeIndex] = currentFieldValue;
+        setSelectedBadgeIndex(undefined);
+      } else {
+        newItems.push(currentFieldValue);
+      }
+      await onChange(newItems);
+      setIsEditing(false);
+    }
+  };
+  const arraySection = (
+    <React.Fragment>
+      {!!items?.length && (
+        <ScrollView height="inherit" width="inherit" maxHeight={"7rem"}>
+          {items.map((value, index) => {
+            return (
+              <Badge
+                key={index}
+                style={{
+                  cursor: "pointer",
+                  alignItems: "center",
+                  marginRight: 3,
+                  marginTop: 3,
+                  backgroundColor:
+                    index === selectedBadgeIndex ? "#B8CEF9" : "",
+                }}
+                onClick={() => {
+                  setSelectedBadgeIndex(index);
+                  setFieldValue(items[index]);
+                  setIsEditing(true);
+                }}
+              >
+                {getBadgeText ? getBadgeText(value) : value.toString()}
+                <Icon
+                  style={{
+                    cursor: "pointer",
+                    paddingLeft: 3,
+                    width: 20,
+                    height: 20,
+                  }}
+                  viewBox={{ width: 20, height: 20 }}
+                  paths={[
+                    {
+                      d: "M10 10l5.09-5.09L10 10l5.09 5.09L10 10zm0 0L4.91 4.91 10 10l-5.09 5.09L10 10z",
+                      stroke: "black",
+                    },
+                  ]}
+                  ariaLabel="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    removeItem(index);
+                  }}
+                />
+              </Badge>
+            );
+          })}
+        </ScrollView>
+      )}
+      <Divider orientation="horizontal" marginTop={5} />
+    </React.Fragment>
+  );
+  if (lengthLimit !== undefined && items.length >= lengthLimit && !isEditing) {
+    return (
+      <React.Fragment>
+        {labelElement}
+        {arraySection}
+      </React.Fragment>
+    );
+  }
+  return (
+    <React.Fragment>
+      {labelElement}
+      {isEditing && children}
+      {!isEditing ? (
+        <>
+          <Button
+            onClick={() => {
+              setIsEditing(true);
+            }}
+          >
+            Add item
+          </Button>
+          {errorMessage && hasError && (
+            <Text color={errorStyles.color} fontSize={errorStyles.fontSize}>
+              {errorMessage}
+            </Text>
+          )}
+        </>
+      ) : (
+        <Flex justifyContent="flex-end">
+          {(currentFieldValue || isEditing) && (
+            <Button
+              children="Cancel"
+              type="button"
+              size="small"
+              onClick={() => {
+                setFieldValue(defaultFieldValue);
+                setIsEditing(false);
+                setSelectedBadgeIndex(undefined);
+              }}
+            ></Button>
+          )}
+          <Button size="small" variation="link" onClick={addItem}>
+            {selectedBadgeIndex !== undefined ? "Save" : "Add"}
+          </Button>
+        </Flex>
+      )}
+      {arraySection}
+    </React.Fragment>
+  );
+}
 export default function EmisionUpdateForm(props) {
   const {
     id: idProp,
@@ -42,8 +214,8 @@ export default function EmisionUpdateForm(props) {
     TerminoPeriodo: "",
     INCERTIDUMBRE: "",
     ORIGENFE: "",
-    companyID: "",
-    userID: "",
+    companyID: undefined,
+    userID: undefined,
   };
   const [Company, setCompany] = React.useState(initialValues.Company);
   const [ALCANCE, setALCANCE] = React.useState(initialValues.ALCANCE);
@@ -79,7 +251,7 @@ export default function EmisionUpdateForm(props) {
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = emisionRecord
-      ? { ...initialValues, ...emisionRecord }
+      ? { ...initialValues, ...emisionRecord, companyID, userID }
       : initialValues;
     setCompany(cleanValues.Company);
     setALCANCE(cleanValues.ALCANCE);
@@ -101,7 +273,11 @@ export default function EmisionUpdateForm(props) {
     setINCERTIDUMBRE(cleanValues.INCERTIDUMBRE);
     setORIGENFE(cleanValues.ORIGENFE);
     setCompanyID(cleanValues.companyID);
+    setCurrentCompanyIDValue(undefined);
+    setCurrentCompanyIDDisplayValue("");
     setUserID(cleanValues.userID);
+    setCurrentUserIDValue(undefined);
+    setCurrentUserIDDisplayValue("");
     setErrors({});
   };
   const [emisionRecord, setEmisionRecord] = React.useState(emisionModelProp);
@@ -111,10 +287,35 @@ export default function EmisionUpdateForm(props) {
         ? await DataStore.query(Emision, idProp)
         : emisionModelProp;
       setEmisionRecord(record);
+      const companyIDRecord = record ? await record.companyID : undefined;
+      setCompanyID(companyIDRecord);
+      const userIDRecord = record ? await record.userID : undefined;
+      setUserID(userIDRecord);
     };
     queryData();
   }, [idProp, emisionModelProp]);
-  React.useEffect(resetStateValues, [emisionRecord]);
+  React.useEffect(resetStateValues, [emisionRecord, companyID, userID]);
+  const [currentCompanyIDDisplayValue, setCurrentCompanyIDDisplayValue] =
+    React.useState("");
+  const [currentCompanyIDValue, setCurrentCompanyIDValue] =
+    React.useState(undefined);
+  const companyIDRef = React.createRef();
+  const [currentUserIDDisplayValue, setCurrentUserIDDisplayValue] =
+    React.useState("");
+  const [currentUserIDValue, setCurrentUserIDValue] = React.useState(undefined);
+  const userIDRef = React.createRef();
+  const companyRecords = useDataStoreBinding({
+    type: "collection",
+    model: Company0,
+  }).items;
+  const userRecords = useDataStoreBinding({
+    type: "collection",
+    model: User,
+  }).items;
+  const getDisplayValue = {
+    companyID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
+    userID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
+  };
   const validations = {
     Company: [{ type: "Required" }],
     ALCANCE: [{ type: "Required" }],
@@ -1101,13 +1302,10 @@ export default function EmisionUpdateForm(props) {
         hasError={errors.ORIGENFE?.hasError}
         {...getOverrideProps(overrides, "ORIGENFE")}
       ></TextField>
-      <TextField
-        label="Company id"
-        isRequired={true}
-        isReadOnly={false}
-        value={companyID}
-        onChange={(e) => {
-          let { value } = e.target;
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
           if (onChange) {
             const modelFields = {
               Company,
@@ -1135,23 +1333,81 @@ export default function EmisionUpdateForm(props) {
             const result = onChange(modelFields);
             value = result?.companyID ?? value;
           }
-          if (errors.companyID?.hasError) {
-            runValidationTasks("companyID", value);
-          }
           setCompanyID(value);
+          setCurrentCompanyIDValue(undefined);
         }}
-        onBlur={() => runValidationTasks("companyID", companyID)}
-        errorMessage={errors.companyID?.errorMessage}
-        hasError={errors.companyID?.hasError}
-        {...getOverrideProps(overrides, "companyID")}
-      ></TextField>
-      <TextField
-        label="User id"
-        isRequired={true}
-        isReadOnly={false}
-        value={userID}
-        onChange={(e) => {
-          let { value } = e.target;
+        currentFieldValue={currentCompanyIDValue}
+        label={"Company id"}
+        items={companyID ? [companyID] : []}
+        hasError={errors?.companyID?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("companyID", currentCompanyIDValue)
+        }
+        errorMessage={errors?.companyID?.errorMessage}
+        getBadgeText={(value) =>
+          value
+            ? getDisplayValue.companyID(
+                companyRecords.find((r) => r.id === value)
+              )
+            : ""
+        }
+        setFieldValue={(value) => {
+          setCurrentCompanyIDDisplayValue(
+            value
+              ? getDisplayValue.companyID(
+                  companyRecords.find((r) => r.id === value)
+                )
+              : ""
+          );
+          setCurrentCompanyIDValue(value);
+        }}
+        inputFieldRef={companyIDRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="Company id"
+          isRequired={true}
+          isReadOnly={false}
+          placeholder="Search Company"
+          value={currentCompanyIDDisplayValue}
+          options={companyRecords
+            .filter(
+              (r, i, arr) =>
+                arr.findIndex((member) => member?.id === r?.id) === i
+            )
+            .map((r) => ({
+              id: r?.id,
+              label: getDisplayValue.companyID?.(r),
+            }))}
+          onSelect={({ id, label }) => {
+            setCurrentCompanyIDValue(id);
+            setCurrentCompanyIDDisplayValue(label);
+            runValidationTasks("companyID", label);
+          }}
+          onClear={() => {
+            setCurrentCompanyIDDisplayValue("");
+          }}
+          defaultValue={companyID}
+          onChange={(e) => {
+            let { value } = e.target;
+            if (errors.companyID?.hasError) {
+              runValidationTasks("companyID", value);
+            }
+            setCurrentCompanyIDDisplayValue(value);
+            setCurrentCompanyIDValue(undefined);
+          }}
+          onBlur={() => runValidationTasks("companyID", currentCompanyIDValue)}
+          errorMessage={errors.companyID?.errorMessage}
+          hasError={errors.companyID?.hasError}
+          ref={companyIDRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "companyID")}
+        ></Autocomplete>
+      </ArrayField>
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
           if (onChange) {
             const modelFields = {
               Company,
@@ -1179,16 +1435,73 @@ export default function EmisionUpdateForm(props) {
             const result = onChange(modelFields);
             value = result?.userID ?? value;
           }
-          if (errors.userID?.hasError) {
-            runValidationTasks("userID", value);
-          }
           setUserID(value);
+          setCurrentUserIDValue(undefined);
         }}
-        onBlur={() => runValidationTasks("userID", userID)}
-        errorMessage={errors.userID?.errorMessage}
-        hasError={errors.userID?.hasError}
-        {...getOverrideProps(overrides, "userID")}
-      ></TextField>
+        currentFieldValue={currentUserIDValue}
+        label={"User id"}
+        items={userID ? [userID] : []}
+        hasError={errors?.userID?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("userID", currentUserIDValue)
+        }
+        errorMessage={errors?.userID?.errorMessage}
+        getBadgeText={(value) =>
+          value
+            ? getDisplayValue.userID(userRecords.find((r) => r.id === value))
+            : ""
+        }
+        setFieldValue={(value) => {
+          setCurrentUserIDDisplayValue(
+            value
+              ? getDisplayValue.userID(userRecords.find((r) => r.id === value))
+              : ""
+          );
+          setCurrentUserIDValue(value);
+        }}
+        inputFieldRef={userIDRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="User id"
+          isRequired={true}
+          isReadOnly={false}
+          placeholder="Search User"
+          value={currentUserIDDisplayValue}
+          options={userRecords
+            .filter(
+              (r, i, arr) =>
+                arr.findIndex((member) => member?.id === r?.id) === i
+            )
+            .map((r) => ({
+              id: r?.id,
+              label: getDisplayValue.userID?.(r),
+            }))}
+          onSelect={({ id, label }) => {
+            setCurrentUserIDValue(id);
+            setCurrentUserIDDisplayValue(label);
+            runValidationTasks("userID", label);
+          }}
+          onClear={() => {
+            setCurrentUserIDDisplayValue("");
+          }}
+          defaultValue={userID}
+          onChange={(e) => {
+            let { value } = e.target;
+            if (errors.userID?.hasError) {
+              runValidationTasks("userID", value);
+            }
+            setCurrentUserIDDisplayValue(value);
+            setCurrentUserIDValue(undefined);
+          }}
+          onBlur={() => runValidationTasks("userID", currentUserIDValue)}
+          errorMessage={errors.userID?.errorMessage}
+          hasError={errors.userID?.hasError}
+          ref={userIDRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "userID")}
+        ></Autocomplete>
+      </ArrayField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}

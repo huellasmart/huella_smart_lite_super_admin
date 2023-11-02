@@ -1,3 +1,13 @@
+type Company @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  email: AWSEmail
+  isActive: Boolean
+  Users: [User] @hasMany(indexName: "byCompany", fields: ["id"])
+  Factors: [Factor] @hasMany(indexName: "byCompany", fields: ["id"])
+  Emisions: [Emision] @hasMany(indexName: "byCompany", fields: ["id"])
+}
+
 type User @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String
@@ -6,18 +16,8 @@ type User @model @auth(rules: [{allow: public}]) {
   isAdmin: Boolean
   isActive: Boolean
   companyID: ID! @index(name: "byCompany")
-  Emisions: [Factor] @hasMany(indexName: "byUser", fields: ["id"])
+  Emisions: [Emision] @hasMany(indexName: "byUser", fields: ["id"])
   Factors: [Factor] @hasMany(indexName: "byUser", fields: ["id"])
-}
-
-type Company @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  name: String
-  email: AWSEmail
-  isActive: Boolean
-  Users: [Factor] @hasMany(indexName: "byCompany", fields: ["id"])
-  Factors: [Factor] @hasMany(indexName: "byCompany", fields: ["id"])
-  Emisions: [Factor] @hasMany(indexName: "byCompany", fields: ["id"])
 }
 
 type Emision @model @auth(rules: [{allow: public}]) {

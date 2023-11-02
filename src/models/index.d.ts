@@ -6,6 +6,44 @@ import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/
 
 
 
+type EagerCompany = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Company, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly email?: string | null;
+  readonly isActive?: boolean | null;
+  readonly Users?: (User | null)[] | null;
+  readonly Factors?: (Factor | null)[] | null;
+  readonly Emisions?: (Emision | null)[] | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyCompany = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Company, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly email?: string | null;
+  readonly isActive?: boolean | null;
+  readonly Users: AsyncCollection<User>;
+  readonly Factors: AsyncCollection<Factor>;
+  readonly Emisions: AsyncCollection<Emision>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Company = LazyLoading extends LazyLoadingDisabled ? EagerCompany : LazyCompany
+
+export declare const Company: (new (init: ModelInit<Company>) => Company) & {
+  copyOf(source: Company, mutator: (draft: MutableModel<Company>) => MutableModel<Company> | void): Company;
+}
+
 type EagerUser = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<User, 'id'>;
@@ -18,7 +56,7 @@ type EagerUser = {
   readonly isAdmin?: boolean | null;
   readonly isActive?: boolean | null;
   readonly companyID: string;
-  readonly Emisions?: (Factor | null)[] | null;
+  readonly Emisions?: (Emision | null)[] | null;
   readonly Factors?: (Factor | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -36,7 +74,7 @@ type LazyUser = {
   readonly isAdmin?: boolean | null;
   readonly isActive?: boolean | null;
   readonly companyID: string;
-  readonly Emisions: AsyncCollection<Factor>;
+  readonly Emisions: AsyncCollection<Emision>;
   readonly Factors: AsyncCollection<Factor>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -46,44 +84,6 @@ export declare type User = LazyLoading extends LazyLoadingDisabled ? EagerUser :
 
 export declare const User: (new (init: ModelInit<User>) => User) & {
   copyOf(source: User, mutator: (draft: MutableModel<User>) => MutableModel<User> | void): User;
-}
-
-type EagerCompany = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<Company, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly name?: string | null;
-  readonly email?: string | null;
-  readonly isActive?: boolean | null;
-  readonly Users?: (Factor | null)[] | null;
-  readonly Factors?: (Factor | null)[] | null;
-  readonly Emisions?: (Factor | null)[] | null;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-type LazyCompany = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<Company, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly name?: string | null;
-  readonly email?: string | null;
-  readonly isActive?: boolean | null;
-  readonly Users: AsyncCollection<Factor>;
-  readonly Factors: AsyncCollection<Factor>;
-  readonly Emisions: AsyncCollection<Factor>;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-export declare type Company = LazyLoading extends LazyLoadingDisabled ? EagerCompany : LazyCompany
-
-export declare const Company: (new (init: ModelInit<Company>) => Company) & {
-  copyOf(source: Company, mutator: (draft: MutableModel<Company>) => MutableModel<Company> | void): Company;
 }
 
 type EagerEmision = {

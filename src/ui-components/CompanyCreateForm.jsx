@@ -20,7 +20,7 @@ import {
   TextField,
   useTheme,
 } from "@aws-amplify/ui-react";
-import { Company, Factor } from "../models";
+import { Company, User, Factor, Emision } from "../models";
 import {
   fetchByPath,
   getOverrideProps,
@@ -258,14 +258,22 @@ export default function CompanyCreateForm(props) {
       ? Emisions.map((r) => getIDValue.Emisions?.(r))
       : getIDValue.Emisions?.(Emisions)
   );
+  const userRecords = useDataStoreBinding({
+    type: "collection",
+    model: User,
+  }).items;
   const factorRecords = useDataStoreBinding({
     type: "collection",
     model: Factor,
   }).items;
+  const emisionRecords = useDataStoreBinding({
+    type: "collection",
+    model: Emision,
+  }).items;
   const getDisplayValue = {
-    Users: (r) => `${r?.cod ? r?.cod + " - " : ""}${r?.id}`,
+    Users: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
     Factors: (r) => `${r?.cod ? r?.cod + " - " : ""}${r?.id}`,
-    Emisions: (r) => `${r?.cod ? r?.cod + " - " : ""}${r?.id}`,
+    Emisions: (r) => `${r?.Company ? r?.Company + " - " : ""}${r?.id}`,
   };
   const validations = {
     name: [],
@@ -355,7 +363,7 @@ export default function CompanyCreateForm(props) {
             ...Users.reduce((promises, original) => {
               promises.push(
                 DataStore.save(
-                  Factor.copyOf(original, (updated) => {
+                  User.copyOf(original, (updated) => {
                     updated.companyID = company.id;
                   })
                 )
@@ -379,7 +387,7 @@ export default function CompanyCreateForm(props) {
             ...Emisions.reduce((promises, original) => {
               promises.push(
                 DataStore.save(
-                  Factor.copyOf(original, (updated) => {
+                  Emision.copyOf(original, (updated) => {
                     updated.companyID = company.id;
                   })
                 )
@@ -531,9 +539,9 @@ export default function CompanyCreateForm(props) {
           label="Users"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search Factor"
+          placeholder="Search User"
           value={currentUsersDisplayValue}
-          options={factorRecords
+          options={userRecords
             .filter((r) => !UsersIdSet.has(getIDValue.Users?.(r)))
             .map((r) => ({
               id: getIDValue.Users?.(r),
@@ -541,7 +549,7 @@ export default function CompanyCreateForm(props) {
             }))}
           onSelect={({ id, label }) => {
             setCurrentUsersValue(
-              factorRecords.find((r) =>
+              userRecords.find((r) =>
                 Object.entries(JSON.parse(id)).every(
                   ([key, value]) => r[key] === value
                 )
@@ -691,9 +699,9 @@ export default function CompanyCreateForm(props) {
           label="Emisions"
           isRequired={false}
           isReadOnly={false}
-          placeholder="Search Factor"
+          placeholder="Search Emision"
           value={currentEmisionsDisplayValue}
-          options={factorRecords
+          options={emisionRecords
             .filter((r) => !EmisionsIdSet.has(getIDValue.Emisions?.(r)))
             .map((r) => ({
               id: getIDValue.Emisions?.(r),
@@ -701,7 +709,7 @@ export default function CompanyCreateForm(props) {
             }))}
           onSelect={({ id, label }) => {
             setCurrentEmisionsValue(
-              factorRecords.find((r) =>
+              emisionRecords.find((r) =>
                 Object.entries(JSON.parse(id)).every(
                   ([key, value]) => r[key] === value
                 )

@@ -6,7 +6,7 @@
 
 import * as React from "react";
 import { AutocompleteProps, GridProps, SwitchFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
-import { Company, Factor } from "../models";
+import { Company, User, Factor, Emision } from "../models";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -26,17 +26,17 @@ export declare type CompanyUpdateFormInputValues = {
     name?: string;
     email?: string;
     isActive?: boolean;
-    Users?: Factor[];
+    Users?: User[];
     Factors?: Factor[];
-    Emisions?: Factor[];
+    Emisions?: Emision[];
 };
 export declare type CompanyUpdateFormValidationValues = {
     name?: ValidationFunction<string>;
     email?: ValidationFunction<string>;
     isActive?: ValidationFunction<boolean>;
-    Users?: ValidationFunction<Factor>;
+    Users?: ValidationFunction<User>;
     Factors?: ValidationFunction<Factor>;
-    Emisions?: ValidationFunction<Factor>;
+    Emisions?: ValidationFunction<Emision>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type CompanyUpdateFormOverridesProps = {

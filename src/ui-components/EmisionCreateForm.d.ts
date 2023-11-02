@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { AutocompleteProps, GridProps, TextFieldProps } from "@aws-amplify/ui-react";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -89,8 +89,8 @@ export declare type EmisionCreateFormOverridesProps = {
     TerminoPeriodo?: PrimitiveOverrideProps<TextFieldProps>;
     INCERTIDUMBRE?: PrimitiveOverrideProps<TextFieldProps>;
     ORIGENFE?: PrimitiveOverrideProps<TextFieldProps>;
-    companyID?: PrimitiveOverrideProps<TextFieldProps>;
-    userID?: PrimitiveOverrideProps<TextFieldProps>;
+    companyID?: PrimitiveOverrideProps<AutocompleteProps>;
+    userID?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type EmisionCreateFormProps = React.PropsWithChildren<{
     overrides?: EmisionCreateFormOverridesProps | undefined | null;
