@@ -25,6 +25,11 @@ function Users() {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
   useEffect(() => {
+    setOpenCreateDialog(false);
+  }, [users.length]);
+
+
+  useEffect(() => {
     const fetchUsers = async () => {
       const companyUsers = await DataStore.query(User, (u) =>
         u.companyID.eq(companyId)

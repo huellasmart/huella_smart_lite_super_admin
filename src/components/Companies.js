@@ -25,6 +25,11 @@ function Companies() {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
   useEffect(() => {
+    setOpenCreateDialog(false);
+  }, [companies.length]);
+
+
+  useEffect(() => {
     fetchCompanies();
     const subscription = DataStore.observe(Company).subscribe(() =>
       fetchCompanies()
