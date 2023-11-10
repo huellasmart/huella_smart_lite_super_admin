@@ -2,5 +2,5 @@
   "AppSyncApiName": "HuellaSmartLite",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
   "DynamoDBEnableServerSideEncryption": false,
-  "AuthModeLastUpdated": "2023-11-01T17:43:06.563Z"
+  "AuthModeLastUpdated": "2023-11-10T14:17:01.192Z"
 }
