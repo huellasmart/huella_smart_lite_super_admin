@@ -111,8 +111,8 @@ type EagerEmision = {
   readonly TerminoPeriodo: string;
   readonly INCERTIDUMBRE?: string | null;
   readonly ORIGENFE?: string | null;
-  readonly companyID: string;
   readonly userID: string;
+  readonly companyID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -142,8 +142,8 @@ type LazyEmision = {
   readonly TerminoPeriodo: string;
   readonly INCERTIDUMBRE?: string | null;
   readonly ORIGENFE?: string | null;
-  readonly companyID: string;
   readonly userID: string;
+  readonly companyID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

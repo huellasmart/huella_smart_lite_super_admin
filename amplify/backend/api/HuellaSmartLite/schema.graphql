@@ -20,7 +20,7 @@ type User @model @auth(rules: [{allow: public}]) {
   Factors: [Factor] @hasMany(indexName: "byUser", fields: ["id"])
 }
 
-type Emision @model @auth(rules: [{allow: public}]) {
+type Emision @model @auth(rules: [{allow: public, operations: [update, delete]}, {allow: groups, groups: ["SuperAdmin"], operations: [read, create, update, delete]}, {allow: owner}]) {
   id: ID!
   Company: String!
   ALCANCE: String!
@@ -41,11 +41,11 @@ type Emision @model @auth(rules: [{allow: public}]) {
   TerminoPeriodo: AWSDate!
   INCERTIDUMBRE: String
   ORIGENFE: String
-  companyID: ID! @index(name: "byCompany")
   userID: ID! @index(name: "byUser")
+  companyID: ID! @index(name: "byCompany")
 }
 
-type Factor @model @auth(rules: [{allow: public}]) {
+type Factor @model @auth(rules: [{allow: public, operations: [update, delete]}, {allow: owner}, {allow: groups, groups: ["SuperAdmin"], operations: [read, create, update, delete]}]) {
   id: ID!
   cod: String!
   ALCANCE: String!

@@ -2,5 +2,11 @@
   "AppSyncApiName": "HuellaSmartLite",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
   "DynamoDBEnableServerSideEncryption": false,
-  "AuthModeLastUpdated": "2023-11-10T14:17:01.192Z"
+  "AuthModeLastUpdated": "2023-11-10T23:24:21.039Z",
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authHuellaSmartLite",
+      "Outputs.UserPoolId"
+    ]
+  }
 }

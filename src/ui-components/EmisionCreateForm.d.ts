@@ -41,8 +41,8 @@ export declare type EmisionCreateFormInputValues = {
     TerminoPeriodo?: string;
     INCERTIDUMBRE?: string;
     ORIGENFE?: string;
-    companyID?: string;
     userID?: string;
+    companyID?: string;
 };
 export declare type EmisionCreateFormValidationValues = {
     Company?: ValidationFunction<string>;
@@ -64,8 +64,8 @@ export declare type EmisionCreateFormValidationValues = {
     TerminoPeriodo?: ValidationFunction<string>;
     INCERTIDUMBRE?: ValidationFunction<string>;
     ORIGENFE?: ValidationFunction<string>;
-    companyID?: ValidationFunction<string>;
     userID?: ValidationFunction<string>;
+    companyID?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type EmisionCreateFormOverridesProps = {
@@ -89,8 +89,8 @@ export declare type EmisionCreateFormOverridesProps = {
     TerminoPeriodo?: PrimitiveOverrideProps<TextFieldProps>;
     INCERTIDUMBRE?: PrimitiveOverrideProps<TextFieldProps>;
     ORIGENFE?: PrimitiveOverrideProps<TextFieldProps>;
-    companyID?: PrimitiveOverrideProps<AutocompleteProps>;
     userID?: PrimitiveOverrideProps<AutocompleteProps>;
+    companyID?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type EmisionCreateFormProps = React.PropsWithChildren<{
     overrides?: EmisionCreateFormOverridesProps | undefined | null;

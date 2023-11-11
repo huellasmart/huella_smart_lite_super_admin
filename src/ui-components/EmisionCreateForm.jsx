@@ -19,7 +19,7 @@ import {
   TextField,
   useTheme,
 } from "@aws-amplify/ui-react";
-import { Emision, Company as Company0, User } from "../models";
+import { Emision, User, Company as Company0 } from "../models";
 import {
   fetchByPath,
   getOverrideProps,
@@ -213,8 +213,8 @@ export default function EmisionCreateForm(props) {
     TerminoPeriodo: "",
     INCERTIDUMBRE: "",
     ORIGENFE: "",
-    companyID: undefined,
     userID: undefined,
+    companyID: undefined,
   };
   const [Company, setCompany] = React.useState(initialValues.Company);
   const [ALCANCE, setALCANCE] = React.useState(initialValues.ALCANCE);
@@ -245,8 +245,8 @@ export default function EmisionCreateForm(props) {
     initialValues.INCERTIDUMBRE
   );
   const [ORIGENFE, setORIGENFE] = React.useState(initialValues.ORIGENFE);
-  const [companyID, setCompanyID] = React.useState(initialValues.companyID);
   const [userID, setUserID] = React.useState(initialValues.userID);
+  const [companyID, setCompanyID] = React.useState(initialValues.companyID);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setCompany(initialValues.Company);
@@ -268,34 +268,34 @@ export default function EmisionCreateForm(props) {
     setTerminoPeriodo(initialValues.TerminoPeriodo);
     setINCERTIDUMBRE(initialValues.INCERTIDUMBRE);
     setORIGENFE(initialValues.ORIGENFE);
-    setCompanyID(initialValues.companyID);
-    setCurrentCompanyIDValue(undefined);
-    setCurrentCompanyIDDisplayValue("");
     setUserID(initialValues.userID);
     setCurrentUserIDValue(undefined);
     setCurrentUserIDDisplayValue("");
+    setCompanyID(initialValues.companyID);
+    setCurrentCompanyIDValue(undefined);
+    setCurrentCompanyIDDisplayValue("");
     setErrors({});
   };
+  const [currentUserIDDisplayValue, setCurrentUserIDDisplayValue] =
+    React.useState("");
+  const [currentUserIDValue, setCurrentUserIDValue] = React.useState(undefined);
+  const userIDRef = React.createRef();
   const [currentCompanyIDDisplayValue, setCurrentCompanyIDDisplayValue] =
     React.useState("");
   const [currentCompanyIDValue, setCurrentCompanyIDValue] =
     React.useState(undefined);
   const companyIDRef = React.createRef();
-  const [currentUserIDDisplayValue, setCurrentUserIDDisplayValue] =
-    React.useState("");
-  const [currentUserIDValue, setCurrentUserIDValue] = React.useState(undefined);
-  const userIDRef = React.createRef();
-  const companyRecords = useDataStoreBinding({
-    type: "collection",
-    model: Company0,
-  }).items;
   const userRecords = useDataStoreBinding({
     type: "collection",
     model: User,
   }).items;
+  const companyRecords = useDataStoreBinding({
+    type: "collection",
+    model: Company0,
+  }).items;
   const getDisplayValue = {
-    companyID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
     userID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
+    companyID: (r) => `${r?.name ? r?.name + " - " : ""}${r?.id}`,
   };
   const validations = {
     Company: [{ type: "Required" }],
@@ -317,8 +317,8 @@ export default function EmisionCreateForm(props) {
     TerminoPeriodo: [{ type: "Required" }],
     INCERTIDUMBRE: [],
     ORIGENFE: [],
-    companyID: [{ type: "Required" }],
     userID: [{ type: "Required" }],
+    companyID: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -365,8 +365,8 @@ export default function EmisionCreateForm(props) {
           TerminoPeriodo,
           INCERTIDUMBRE,
           ORIGENFE,
-          companyID,
           userID,
+          companyID,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -440,8 +440,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.Company ?? value;
@@ -484,8 +484,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.ALCANCE ?? value;
@@ -528,8 +528,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.CATEGORIA ?? value;
@@ -572,8 +572,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.SUBCATEGORIA ?? value;
@@ -616,8 +616,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.ACTIVIDAD ?? value;
@@ -660,8 +660,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.COMBUSTIBLE ?? value;
@@ -704,8 +704,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.UNIDADFE ?? value;
@@ -752,8 +752,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.CANTIDAD ?? value;
@@ -800,8 +800,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.CO2 ?? value;
@@ -848,8 +848,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.CH4 ?? value;
@@ -896,8 +896,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.N2O ?? value;
@@ -944,8 +944,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.SF6 ?? value;
@@ -992,8 +992,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.HFC ?? value;
@@ -1040,8 +1040,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.PFC ?? value;
@@ -1088,8 +1088,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.NF3 ?? value;
@@ -1133,8 +1133,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.InicioPeriodo ?? value;
@@ -1178,8 +1178,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo: value,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.TerminoPeriodo ?? value;
@@ -1222,8 +1222,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE: value,
               ORIGENFE,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.INCERTIDUMBRE ?? value;
@@ -1266,8 +1266,8 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE: value,
-              companyID,
               userID,
+              companyID,
             };
             const result = onChange(modelFields);
             value = result?.ORIGENFE ?? value;
@@ -1307,8 +1307,105 @@ export default function EmisionCreateForm(props) {
               TerminoPeriodo,
               INCERTIDUMBRE,
               ORIGENFE,
-              companyID: value,
+              userID: value,
+              companyID,
+            };
+            const result = onChange(modelFields);
+            value = result?.userID ?? value;
+          }
+          setUserID(value);
+          setCurrentUserIDValue(undefined);
+        }}
+        currentFieldValue={currentUserIDValue}
+        label={"User id"}
+        items={userID ? [userID] : []}
+        hasError={errors?.userID?.hasError}
+        runValidationTasks={async () =>
+          await runValidationTasks("userID", currentUserIDValue)
+        }
+        errorMessage={errors?.userID?.errorMessage}
+        getBadgeText={(value) =>
+          value
+            ? getDisplayValue.userID(userRecords.find((r) => r.id === value))
+            : ""
+        }
+        setFieldValue={(value) => {
+          setCurrentUserIDDisplayValue(
+            value
+              ? getDisplayValue.userID(userRecords.find((r) => r.id === value))
+              : ""
+          );
+          setCurrentUserIDValue(value);
+        }}
+        inputFieldRef={userIDRef}
+        defaultFieldValue={""}
+      >
+        <Autocomplete
+          label="User id"
+          isRequired={true}
+          isReadOnly={false}
+          placeholder="Search User"
+          value={currentUserIDDisplayValue}
+          options={userRecords
+            .filter(
+              (r, i, arr) =>
+                arr.findIndex((member) => member?.id === r?.id) === i
+            )
+            .map((r) => ({
+              id: r?.id,
+              label: getDisplayValue.userID?.(r),
+            }))}
+          onSelect={({ id, label }) => {
+            setCurrentUserIDValue(id);
+            setCurrentUserIDDisplayValue(label);
+            runValidationTasks("userID", label);
+          }}
+          onClear={() => {
+            setCurrentUserIDDisplayValue("");
+          }}
+          onChange={(e) => {
+            let { value } = e.target;
+            if (errors.userID?.hasError) {
+              runValidationTasks("userID", value);
+            }
+            setCurrentUserIDDisplayValue(value);
+            setCurrentUserIDValue(undefined);
+          }}
+          onBlur={() => runValidationTasks("userID", currentUserIDValue)}
+          errorMessage={errors.userID?.errorMessage}
+          hasError={errors.userID?.hasError}
+          ref={userIDRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, "userID")}
+        ></Autocomplete>
+      </ArrayField>
+      <ArrayField
+        lengthLimit={1}
+        onChange={async (items) => {
+          let value = items[0];
+          if (onChange) {
+            const modelFields = {
+              Company,
+              ALCANCE,
+              CATEGORIA,
+              SUBCATEGORIA,
+              ACTIVIDAD,
+              COMBUSTIBLE,
+              UNIDADFE,
+              CANTIDAD,
+              CO2,
+              CH4,
+              N2O,
+              SF6,
+              HFC,
+              PFC,
+              NF3,
+              InicioPeriodo,
+              TerminoPeriodo,
+              INCERTIDUMBRE,
+              ORIGENFE,
               userID,
+              companyID: value,
             };
             const result = onChange(modelFields);
             value = result?.companyID ?? value;
@@ -1381,103 +1478,6 @@ export default function EmisionCreateForm(props) {
           ref={companyIDRef}
           labelHidden={true}
           {...getOverrideProps(overrides, "companyID")}
-        ></Autocomplete>
-      </ArrayField>
-      <ArrayField
-        lengthLimit={1}
-        onChange={async (items) => {
-          let value = items[0];
-          if (onChange) {
-            const modelFields = {
-              Company,
-              ALCANCE,
-              CATEGORIA,
-              SUBCATEGORIA,
-              ACTIVIDAD,
-              COMBUSTIBLE,
-              UNIDADFE,
-              CANTIDAD,
-              CO2,
-              CH4,
-              N2O,
-              SF6,
-              HFC,
-              PFC,
-              NF3,
-              InicioPeriodo,
-              TerminoPeriodo,
-              INCERTIDUMBRE,
-              ORIGENFE,
-              companyID,
-              userID: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.userID ?? value;
-          }
-          setUserID(value);
-          setCurrentUserIDValue(undefined);
-        }}
-        currentFieldValue={currentUserIDValue}
-        label={"User id"}
-        items={userID ? [userID] : []}
-        hasError={errors?.userID?.hasError}
-        runValidationTasks={async () =>
-          await runValidationTasks("userID", currentUserIDValue)
-        }
-        errorMessage={errors?.userID?.errorMessage}
-        getBadgeText={(value) =>
-          value
-            ? getDisplayValue.userID(userRecords.find((r) => r.id === value))
-            : ""
-        }
-        setFieldValue={(value) => {
-          setCurrentUserIDDisplayValue(
-            value
-              ? getDisplayValue.userID(userRecords.find((r) => r.id === value))
-              : ""
-          );
-          setCurrentUserIDValue(value);
-        }}
-        inputFieldRef={userIDRef}
-        defaultFieldValue={""}
-      >
-        <Autocomplete
-          label="User id"
-          isRequired={true}
-          isReadOnly={false}
-          placeholder="Search User"
-          value={currentUserIDDisplayValue}
-          options={userRecords
-            .filter(
-              (r, i, arr) =>
-                arr.findIndex((member) => member?.id === r?.id) === i
-            )
-            .map((r) => ({
-              id: r?.id,
-              label: getDisplayValue.userID?.(r),
-            }))}
-          onSelect={({ id, label }) => {
-            setCurrentUserIDValue(id);
-            setCurrentUserIDDisplayValue(label);
-            runValidationTasks("userID", label);
-          }}
-          onClear={() => {
-            setCurrentUserIDDisplayValue("");
-          }}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.userID?.hasError) {
-              runValidationTasks("userID", value);
-            }
-            setCurrentUserIDDisplayValue(value);
-            setCurrentUserIDValue(undefined);
-          }}
-          onBlur={() => runValidationTasks("userID", currentUserIDValue)}
-          errorMessage={errors.userID?.errorMessage}
-          hasError={errors.userID?.hasError}
-          ref={userIDRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, "userID")}
         ></Autocomplete>
       </ArrayField>
       <Flex

@@ -399,15 +399,15 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "companyID": {
-                    "name": "companyID",
+                "userID": {
+                    "name": "userID",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
                     "attributes": []
                 },
-                "userID": {
-                    "name": "userID",
+                "companyID": {
+                    "name": "companyID",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
@@ -440,18 +440,18 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byCompany",
+                        "name": "byUser",
                         "fields": [
-                            "companyID"
+                            "userID"
                         ]
                     }
                 },
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byUser",
+                        "name": "byCompany",
                         "fields": [
-                            "userID"
+                            "companyID"
                         ]
                     }
                 },
@@ -461,6 +461,30 @@ export const schema = {
                         "rules": [
                             {
                                 "allow": "public",
+                                "operations": [
+                                    "update",
+                                    "delete"
+                                ]
+                            },
+                            {
+                                "groupClaim": "cognito:groups",
+                                "provider": "userPools",
+                                "allow": "groups",
+                                "groups": [
+                                    "SuperAdmin"
+                                ],
+                                "operations": [
+                                    "read",
+                                    "create",
+                                    "update",
+                                    "delete"
+                                ]
+                            },
+                            {
+                                "provider": "userPools",
+                                "ownerField": "owner",
+                                "allow": "owner",
+                                "identityClaim": "cognito:username",
                                 "operations": [
                                     "create",
                                     "update",
@@ -630,10 +654,34 @@ export const schema = {
                             {
                                 "allow": "public",
                                 "operations": [
+                                    "update",
+                                    "delete"
+                                ]
+                            },
+                            {
+                                "provider": "userPools",
+                                "ownerField": "owner",
+                                "allow": "owner",
+                                "identityClaim": "cognito:username",
+                                "operations": [
                                     "create",
                                     "update",
                                     "delete",
                                     "read"
+                                ]
+                            },
+                            {
+                                "groupClaim": "cognito:groups",
+                                "provider": "userPools",
+                                "allow": "groups",
+                                "groups": [
+                                    "SuperAdmin"
+                                ],
+                                "operations": [
+                                    "read",
+                                    "create",
+                                    "update",
+                                    "delete"
                                 ]
                             }
                         ]
